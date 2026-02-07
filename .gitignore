@@ -1,62 +1,109 @@
+# ==================================================
+# macOS
+# ==================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# ==================================================
 # Xcode
-#
-# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+# ==================================================
+build/
+DerivedData/
 
-## User settings
-xcuserdata/
+# Per-user Xcode data (should NOT be committed)
+*.xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
 
-## Obj-C/Swift specific
-*.hmap
+# Xcode user state
+*.xcuserstate
 
-## App packaging
-*.ipa
-*.dSYM.zip
-*.dSYM
+# Xcode SCM / checkout metadata
+*.xccheckout
+*.xcscmblueprint
 
-## Playgrounds
+# Keep shared Xcode data (schemes, CI, etc.)
+!*.xcodeproj/xcshareddata/
+!*.xcworkspace/xcshareddata/
+
+# SwiftUI previews
+*.preview-thumbnails/
+
+# ==================================================
+# Swift Package Manager
+# ==================================================
+.build/
+Packages/
+
+# Commit or ignore based on team preference
+Package.resolved
+
+# ==================================================
+# CocoaPods
+# ==================================================
+Pods/
+*.xcworkspace
+
+# ==================================================
+# Carthage
+# ==================================================
+Carthage/Build/
+
+# ==================================================
+# Fastlane
+# ==================================================
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# ==================================================
+# Code Coverage
+# ==================================================
+*.profdata
+*.gcno
+*.gcda
+
+# ==================================================
+# Logs & Temp Files
+# ==================================================
+*.log
+tmp/
+*.swp
+
+# ==================================================
+# Environment / Secrets
+# ==================================================
+.env
+.env.*
+
+# ==================================================
+# Playgrounds
+# ==================================================
 timeline.xctimeline
 playground.xcworkspace
 
-# Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
-# Package.resolved
-# *.xcodeproj
-#
-# Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
-# hence it is not needed unless you have added a package configuration file to your project
-# .swiftpm
+# ==================================================
+# Crash Reports
+# ==================================================
+*.crash
+*.dSYM
+*.dSYM.zip
 
-.build/
+# ==================================================
+# Xcode Cloud
+# ==================================================
+.xcodecloud/
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-#
-# Pods/
-#
-# Add this line if you want to avoid checking in source code from the Xcode workspace
-# *.xcworkspace
+# ==================================================
+# SwiftLint
+# ==================================================
+.swiftlint.yml
 
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-# Carthage/Checkouts
-
-Carthage/Build/
-
-# fastlane
-#
-# It is recommended to not store the screenshots in the git repo.
-# Instead, use fastlane to re-generate the screenshots whenever they are needed.
-# For more information about the recommended setup visit:
-# https://docs.fastlane.tools/best-practices/source-control/#source-control
-
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+# ==================================================
+# Archives / Builds
+# ==================================================
+*.ipa
