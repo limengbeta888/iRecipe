@@ -7,9 +7,10 @@
 
 import Foundation
 
-enum RecipeListState: Equatable {
-    case idle
-    case loading
-    case loaded([Recipe])
-    case error(String)
+struct RecipeListState: Equatable {
+    var recipes: [Recipe] = []
+    var isLoading: Bool = false
+    var isLoadingMore: Bool = false
+    var errorMessage: String? = nil
+    var hasMore: Bool = true
 }

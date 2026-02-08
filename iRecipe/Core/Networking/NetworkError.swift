@@ -51,26 +51,6 @@ enum NetworkError: Error, LocalizedError, Equatable {
         }
     }
     
-    // MARK: - User-Friendly Message
-    var userFriendlyMessage: String {
-        switch self {
-        case .invalidURL, .invalidResponse, .decodingError, .encodingError:
-            return "Something went wrong. Please try again."
-        case .noData:
-            return "No data available at the moment."
-        case .unauthorized:
-            return "Please log in to continue."
-        case .notFound:
-            return "The content you're looking for doesn't exist."
-        case .serverError:
-            return "Our servers are having issues. Please try again later."
-        case .httpError:
-            return "Something went wrong. Please try again."
-        case .networkError, .timeout, .noInternetConnection:
-            return "Please check your internet connection and try again."
-        }
-    }
-    
     // MARK: - Equatable Conformance
     static func == (lhs: NetworkError, rhs: NetworkError) -> Bool {
         switch (lhs, rhs) {

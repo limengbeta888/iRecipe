@@ -9,6 +9,6 @@ import Foundation
 
 enum RecipeListIntent: Equatable {
     case onAppear
-    case refresh
+    case loadMore
     case retry
 }

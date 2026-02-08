@@ -14,90 +14,58 @@ struct RecipeListView: View {
     @State private var showErrorAlert = false
 
     var body: some View {
-        NavigationStack(path: $path) {
-            ZStack {
-                recipeList
-                    .navigationTitle("Recipes")
-                    .toolbar {
-                        if case .loading = store.state {
-                            ToolbarItem(placement: .principal) {
-                                ProgressView()
+        NavigationStack {
+            List {
+                ForEach(store.state.recipes) { recipe in
+                    RecipeCell(recipe: recipe)
+                        .onAppear {
+                            if recipe.id == store.state.recipes.last?.id {
+                                store.send(.loadMore)
                             }
                         }
-                    }
-
-                if case .loading = store.state {
-                    loadingOverlay
                 }
+
+                if store.state.isLoadingMore {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
+            }
+            .navigationTitle("Recipes")
+            .overlay {
+                if store.state.isLoading && store.state.recipes.isEmpty {
+                    ProgressView("Loading...")
+                }
+            }
+            .alert(
+                "Error",
+                isPresented: .constant(store.state.errorMessage != nil)
+            ) {
+                Button("Retry") {
+                    store.send(.retry)
+                }
+            } message: {
+                Text(store.state.errorMessage ?? "Something went wrong.")
             }
             .onAppear {
                 store.send(.onAppear)
             }
-            .alert(
-                "Failed to load recipes",
-                isPresented: $showErrorAlert,
-                actions: {
-                    Button("Retry") {
-                        store.send(.retry)
-                    }
-                },
-                message: {
-                    Text(errorMessage)
-                }
-            )
-            .onChange(of: store.state) {
-                if case .error = store.state {
-                    showErrorAlert = true
-                }
-            }
-            .navigationDestination(for: Recipe.self) { recipe in
-                RecipeDetailView(
-                    store: RecipeDetailStore(recipe: recipe, isFavorite: false),
-                    recipe: recipe
-                )
-            }
         }
-    }
-    
-    var recipeList: some View {
-        List {
-            if case .loaded(let recipes) = store.state {
-                ForEach(recipes) { recipe in
-                    RecipeCell(recipe: recipe)
-                        .onTapGesture {
-                            path = [recipe]
-                        }
-                }
-            }
-        }
-        .listStyle(.plain)
-        .refreshable {
-            store.send(.refresh)
-        }
-    }
-    
-    var loadingOverlay: some View {
-        VStack {
-            ProgressView("Loading recipes...")
-                .padding()
-                .background(.ultraThinMaterial)
-                .cornerRadius(12)
-                .padding(.top, 8)
-
-            Spacer()
-        }
-    }
-    
-    var errorMessage: String {
-        if case .error(let message) = store.state {
-            return message
-        }
-        return "Something went wrong."
     }
 }
 
 #Preview {
     RecipeListView(
-        store: RecipeListStore(state: .loaded(Recipe.mockList))
+        store: RecipeListStore(
+                state: RecipeListState(
+                recipes: Recipe.mockList,
+                isLoading: false,
+                isLoadingMore: false,
+                errorMessage: nil,
+                hasMore: false
+            )
+        )
     )
 }
