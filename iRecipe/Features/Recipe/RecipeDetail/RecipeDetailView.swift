@@ -9,13 +9,17 @@ import SwiftUI
 import Combine
 
 struct RecipeDetailView: View {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject var store: RecipeDetailStore
-    let recipe: Recipe
+
+    @State private var shareItems: [Any] = []
+    @State private var showShareSheet = false
     
-    init(recipe: Recipe, store: RecipeDetailStore) {
-        self.recipe = recipe
+    let recipe: Recipe
+
+    init(store: RecipeDetailStore, recipe: Recipe) {
         self.store = store
+        self.recipe = recipe
     }
     
     var body: some View {
@@ -29,62 +33,64 @@ struct RecipeDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.black)
-                    .onTapGesture {
-                        dismiss()
-                    }
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    //viewModel.handle(.toggleFavorite)
-                } label: {
-//                    Image(systemName: viewModel.state.isFavorite ? "heart.fill" : "heart")
-//                        .foregroundColor(viewModel.state.isFavorite ? .red : .primary)
-                    Image(systemName: "heart.fill")
-                        .foregroundColor(.red)
-                }
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    //viewModel.handle(.shareRecipe)
-                } label: {
-                    Image(systemName: "square.and.arrow.up")
-                }
+            favoriteButton
+            shareButton
+        }
+        .onReceive(store.effects) { effect in
+            switch effect {
+            case .shareRecipe:
+                shareItems = [
+                    recipe.name,
+                    recipe.image,
+                    "Cuisine: \(recipe.cuisine)",
+                    "Rating: ⭐️ \(recipe.formattedRating)"
+                ]
+                showShareSheet = true
             }
         }
-        .onAppear {
-//            store.send(.onAppear)
-            setupSideEffectHandling()
+        .sheet(isPresented: $showShareSheet) {
+            ShareSheet(items: shareItems)
         }
     }
     
-    // MARK: - Side Effect Handling
-    private func setupSideEffectHandling() {
-//        viewModel.sideEffects
-//            .sink { effect in
-//                switch effect {
-//                case .shareRecipe(let recipe):
-//                    // Handle share action
-//                    print("Share recipe: \(recipe.name)")
-//                case .showFavoriteConfirmation:
-//                    // Could show a toast or haptic feedback
-//                    print("Favorite toggled")
-//                }
-//            }
-//            .store(in: &cancellables)
+    var favoriteButton: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                store.send(.toggleFavorite)
+            } label: {
+                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                    .foregroundColor(isFavorite ? .red : .primary)
+            }
+        }
+    }
+
+    var shareButton: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+            Button {
+                store.send(.share)
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+            }
+        }
+    }
+
+    var isFavorite: Bool {
+        if case .idle(let value) = store.state {
+            return value
+        }
+        return false
     }
 }
 
-
-
 // MARK: - Preview
 #Preview {
-    let store = RecipeDetailStore()
     NavigationStack {
-        RecipeDetailView(recipe: Recipe.mock, store: store)
+        RecipeDetailView(
+            store: RecipeDetailStore(
+                recipe: Recipe.mock,
+                isFavorite: true
+            ),
+            recipe: Recipe.mock
+        )
     }
 }

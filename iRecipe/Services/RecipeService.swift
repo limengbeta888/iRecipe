@@ -7,19 +7,19 @@
 
 import Foundation
 
-// MARK: - Network Error
-enum NetworkError: Error, LocalizedError {
-    case invalidResponse
-}
-
-// MARK: - Recipe Service Protocol
 protocol RecipeServiceProtocol {
     func fetchRecipes(limit: Int, skip: Int) async throws -> RecipeResponse
 }
 
-// MARK: - Recipe Service Implementation
 final class RecipeService: RecipeServiceProtocol {
-    func fetchRecipes(limit: Int = 10, skip: Int = 0) async throws -> RecipeResponse {
-        throw NetworkError.invalidResponse
+    private let networkClient: NetworkClientProtocol
+    
+    init(networkClient: NetworkClientProtocol) {
+        self.networkClient = networkClient
+    }
+    
+    func fetchRecipes(limit: Int, skip: Int) async throws -> RecipeResponse {
+        let endpoint = RecipeEndpoint.recipes(limit: limit, skip: skip)
+        return try await networkClient.request(endpoint: endpoint)
     }
 }

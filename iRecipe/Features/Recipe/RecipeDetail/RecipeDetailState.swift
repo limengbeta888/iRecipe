@@ -6,5 +6,5 @@
 //
 
 enum RecipeDetailState: Equatable {
-    case favorite(Bool)
+    case idle(isFavorite: Bool)
 }

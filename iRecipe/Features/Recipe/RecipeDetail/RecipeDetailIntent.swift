@@ -7,8 +7,7 @@
 
 import Foundation
 
-enum RecipeDetailIntent {
-    case share(recipe: Recipe)
-    case addFavorite
-    case removeFavorite
+enum RecipeDetailIntent: Equatable {
+    case toggleFavorite
+    case share
 }

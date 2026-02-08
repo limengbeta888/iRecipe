@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RecipeListIntent {
+enum RecipeListIntent: Equatable {
     case onAppear
     case refresh
     case retry

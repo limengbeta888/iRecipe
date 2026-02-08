@@ -41,28 +41,23 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
 
         registerManagers()
-        initEagerObjects()
         
         return true
     }
     
     private func registerManagers() {
-        AppDelegate.container.register(RecipeServiceProtocol.self) { _ in
-            return RecipeService()
+        // Dependency Injection
+        
+        AppDelegate.container.register(APIConfigProtocol.self) { _ in
+            return APIConfig()
         }.inObjectScope(.container)
-//
-//        AppDelegate.container.register(AdsManagerProtocol.self) { resolver in
-//            return AdsManager(userSettingManager: resolver.resolve(UserSettingManagerProtocol.self)!,
-//                              remoteConfigService: resolver.resolve(RemoteConfigServiceProtocol.self)!)
-//        }.inObjectScope(.container)
-//
-//        AppDelegate.container.register(TimeServiceProtocol.self) { _ in
-//            return TimeService()
-//        }.inObjectScope(.container)
-    }
-    
-    private func initEagerObjects() {
-//        _ = AppDelegate.container.resolve(RemoteConfigServiceProtocol.self)
-//        _ = AppDelegate.container.resolve(AdsManagerProtocol.self)
+        
+        AppDelegate.container.register(NetworkClientProtocol.self) { resolver in
+            return NetworkClient(apiConfig: resolver.resolve(APIConfigProtocol.self)!)
+        }.inObjectScope(.container)
+        
+        AppDelegate.container.register(RecipeServiceProtocol.self) { resolver in
+            return RecipeService(networkClient: resolver.resolve(NetworkClientProtocol.self)!)
+        }.inObjectScope(.container)
     }
 }

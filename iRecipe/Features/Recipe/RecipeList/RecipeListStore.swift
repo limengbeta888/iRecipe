@@ -27,30 +27,37 @@ final class RecipeListStore: ObservableObject {
         self.isPreview = true
     }
     
+    // MARK: - Intent
     func send(_ intent: RecipeListIntent) {
         guard !(isPreview && intent == .onAppear) else { return }
-        
-        state = reducer.reduce(state: state, intent: intent)
-        
-        if case .loading = state {
-            loadRecipe()
+
+        switch intent {
+        case .onAppear:
+            guard case .idle = state else { return }
+            loadRecipes()
+
+        case .refresh, .retry:
+            loadRecipes()
         }
     }
 
-    private func loadRecipe() {
-//        Task {
-//            do {
-//                let recipe = try await recipeService.fetchRecipe()
-//                state = reducer.reduce(
-//                    state: state,
-//                    intent: .loadSuccess(recipe)
-//                )
-//            } catch {
-//                state = reducer.reduce(
-//                    state: state,
-//                    intent: .loadFailure(error)
-//                )
-//            }
-//        }
+    // MARK: - Side Effect
+    private func loadRecipes() {
+        state = reducer.reduce(state: state, result: .loading)
+
+        Task {
+            do {
+                let response = try await recipeService.fetchRecipes(limit: 20, skip: 0)
+                state = reducer.reduce(
+                    state: state,
+                    result: .success(response.recipes)
+                )
+            } catch {
+                state = reducer.reduce(
+                    state: state,
+                    result: .failure(error.localizedDescription)
+                )
+            }
+        }
     }
 }

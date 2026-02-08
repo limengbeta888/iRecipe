@@ -11,58 +11,93 @@ import Combine
 struct RecipeListView: View {
     @ObservedObject var store: RecipeListStore
     @State private var path = [Recipe]()
-    
+    @State private var showErrorAlert = false
+
     var body: some View {
         NavigationStack(path: $path) {
-            content
-                .navigationTitle("Recipes")
-                .onAppear {
-                    store.send(.onAppear)
+            ZStack {
+                recipeList
+                    .navigationTitle("Recipes")
+                    .toolbar {
+                        if case .loading = store.state {
+                            ToolbarItem(placement: .principal) {
+                                ProgressView()
+                            }
+                        }
+                    }
+
+                if case .loading = store.state {
+                    loadingOverlay
                 }
-                .navigationDestination(for: Recipe.self) { recipe in
-                    RecipeDetailView(recipe: recipe, store: RecipeDetailStore())
+            }
+            .onAppear {
+                store.send(.onAppear)
+            }
+            .alert(
+                "Failed to load recipes",
+                isPresented: $showErrorAlert,
+                actions: {
+                    Button("Retry") {
+                        store.send(.retry)
+                    }
+                },
+                message: {
+                    Text(errorMessage)
                 }
+            )
+            .onChange(of: store.state) {
+                if case .error = store.state {
+                    showErrorAlert = true
+                }
+            }
+            .navigationDestination(for: Recipe.self) { recipe in
+                RecipeDetailView(
+                    store: RecipeDetailStore(recipe: recipe, isFavorite: false),
+                    recipe: recipe
+                )
+            }
         }
     }
-
-    @ViewBuilder
-    private var content: some View {
-        switch store.state {
-        case .idle:
-            EmptyView()
-
-        case .loading:
-            ProgressView("Loading recipes...")
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-        case .loaded(let recipes):
-            List(recipes) { recipe in
-                RecipeCell(recipe: recipe)
-                    .onTapGesture {
-                        path = [recipe]
-                    }
-            }
-            .listStyle(.plain)
-            .refreshable {
-                store.send(.refresh)
-            }
-
-        case .error(let message):
-            VStack(spacing: 12) {
-                Text(message)
-                    .foregroundColor(.red)
-                    .multilineTextAlignment(.center)
-
-                Button("Retry") {
-                    store.send(.retry)
+    
+    var recipeList: some View {
+        List {
+            if case .loaded(let recipes) = store.state {
+                ForEach(recipes) { recipe in
+                    RecipeCell(recipe: recipe)
+                        .onTapGesture {
+                            path = [recipe]
+                        }
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .listStyle(.plain)
+        .refreshable {
+            store.send(.refresh)
+        }
+    }
+    
+    var loadingOverlay: some View {
+        VStack {
+            ProgressView("Loading recipes...")
+                .padding()
+                .background(.ultraThinMaterial)
+                .cornerRadius(12)
+                .padding(.top, 8)
+
+            Spacer()
+        }
+    }
+    
+    var errorMessage: String {
+        if case .error(let message) = store.state {
+            return message
+        }
+        return "Something went wrong."
     }
 }
 
 #Preview {
-    let store = RecipeListStore(state: .loaded(Recipe.mockList))
-    RecipeListView(store: store)
+    RecipeListView(
+        store: RecipeListStore(state: .loaded(Recipe.mockList))
+    )
 }

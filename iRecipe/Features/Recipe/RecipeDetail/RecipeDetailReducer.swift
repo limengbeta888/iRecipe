@@ -8,16 +8,18 @@
 import Foundation
 
 struct RecipeDetailReducer {
-    func reduce(state: RecipeDetailState, intent: RecipeDetailIntent) -> RecipeDetailState {
-        switch (state, intent) {
-        case (_, .addFavorite):
-            return .favorite(true)
+    func reduce(
+        state: RecipeDetailState,
+        intent: RecipeDetailIntent
+    ) -> (RecipeDetailState, RecipeDetailEffect?) {
 
-        case (_, .removeFavorite):
-            return .favorite(false)
-   
-        default:
-            return state
+        switch (state, intent) {
+
+        case (.idle(let isFavorite), .toggleFavorite):
+            return (.idle(isFavorite: !isFavorite), nil)
+
+        case (.idle, .share):
+            return (state, .shareRecipe)
         }
     }
 }

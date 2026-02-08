@@ -8,16 +8,19 @@
 import Foundation
 
 struct RecipeListReducer {
-    func reduce(state: RecipeListState, intent: RecipeListIntent) -> RecipeListState {
-        switch (state, intent) {
-        case (_, .onAppear):
+    func reduce(
+        state: RecipeListState,
+        result: RecipeListResult
+    ) -> RecipeListState {
+        switch result {
+        case .loading:
             return .loading
 
-        case (_, .retry):
-            return .loading
+        case .success(let recipes):
+            return .loaded(recipes)
 
-        default:
-            return state
+        case .failure(let message):
+            return .error(message)
         }
     }
 }
