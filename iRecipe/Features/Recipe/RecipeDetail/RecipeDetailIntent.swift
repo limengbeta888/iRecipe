@@ -7,7 +7,8 @@
 
 import Foundation
 
-// MARK: - Recipe Detail Intent
 enum RecipeDetailIntent {
-
+    case share(recipe: Recipe)
+    case addFavorite
+    case removeFavorite
 }

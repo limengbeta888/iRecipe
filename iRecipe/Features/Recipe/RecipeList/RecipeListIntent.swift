@@ -7,7 +7,8 @@
 
 import Foundation
 
-// MARK: - Recipe List Intent
 enum RecipeListIntent {
-
+    case onAppear
+    case refresh
+    case retry
 }

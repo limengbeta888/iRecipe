@@ -8,5 +8,12 @@
 import Combine
 import SwiftUI
 
-@MainActor
-final class RecipeDetailStore: Observable {}
+final class RecipeDetailStore: ObservableObject {
+    @Published private(set) var state: RecipeDetailState = .favorite(false)
+    
+    private let reducer = RecipeDetailReducer()
+    
+    func send(_ intent: RecipeDetailIntent) {
+        state = reducer.reduce(state: state, intent: intent)
+    }
+}

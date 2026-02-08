@@ -7,4 +7,17 @@
 
 import Foundation
 
-struct RecipeListReducer {}
+struct RecipeListReducer {
+    func reduce(state: RecipeListState, intent: RecipeListIntent) -> RecipeListState {
+        switch (state, intent) {
+        case (_, .onAppear):
+            return .loading
+
+        case (_, .retry):
+            return .loading
+
+        default:
+            return state
+        }
+    }
+}

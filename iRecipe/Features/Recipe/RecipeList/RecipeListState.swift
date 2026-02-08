@@ -7,7 +7,9 @@
 
 import Foundation
 
-// MARK: - Recipe List State
-struct RecipeListState: Equatable {
-    var recipes: [Recipe] = []
+enum RecipeListState: Equatable {
+    case idle
+    case loading
+    case loaded([Recipe])
+    case error(String)
 }

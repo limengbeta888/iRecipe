@@ -16,7 +16,7 @@ struct RecipeResponse: Codable {
 }
 
 // MARK: - Recipe Model
-struct Recipe: Codable, Identifiable, Equatable {
+struct Recipe: Codable, Identifiable, Hashable {
     let id: Int
     let name: String
     let ingredients: [String]

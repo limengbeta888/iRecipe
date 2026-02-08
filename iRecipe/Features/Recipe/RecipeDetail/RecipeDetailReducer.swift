@@ -7,4 +7,17 @@
 
 import Foundation
 
-struct RecipeDetailReducer {}
+struct RecipeDetailReducer {
+    func reduce(state: RecipeDetailState, intent: RecipeDetailIntent) -> RecipeDetailState {
+        switch (state, intent) {
+        case (_, .addFavorite):
+            return .favorite(true)
+
+        case (_, .removeFavorite):
+            return .favorite(false)
+   
+        default:
+            return state
+        }
+    }
+}

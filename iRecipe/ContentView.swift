@@ -12,8 +12,10 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
 
+    @StateObject private var recipeListStore = RecipeListStore()
+    
     var body: some View {
-        RecipeListView()
+        RecipeListView(store: recipeListStore)
     }
     
 //    var body: some View {
