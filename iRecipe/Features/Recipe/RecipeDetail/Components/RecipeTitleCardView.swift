@@ -57,6 +57,7 @@ struct RecipeTitleCardView: View {
                 Text(recipe.name)
                     .font(.title)
                     .fontWeight(.bold)
+                    .accessibilityIdentifier("recipe_detail_title")
                 
                 HStack {
                     Image(systemName: "star.fill")

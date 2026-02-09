@@ -17,10 +17,9 @@ struct RecipeListView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                
-                Text("Recipe count: \(store.state.recipes.count)")
                 ForEach(store.state.recipes) { recipe in
                     RecipeCell(recipe: recipe)
+                        .accessibilityIdentifier("recipe_cell_\(recipe.id)")
                         .onAppear {
                             if recipe.id == store.state.recipes.last?.id {
                                 store.send(.loadMore)
@@ -31,6 +30,7 @@ struct RecipeListView: View {
                         }
                 }
             }
+            .accessibilityIdentifier("recipe_list")
             .navigationTitle("Recipes")
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(
@@ -43,6 +43,7 @@ struct RecipeListView: View {
                 placement: .navigationBarDrawer(displayMode: .always),
                 prompt: "Search recipes"
             )
+            .accessibilityIdentifier("recipe_search")
             .overlay {
                 if store.state.isLoading {
                     ProgressView("Loading...")

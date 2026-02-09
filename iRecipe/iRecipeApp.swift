@@ -9,9 +9,25 @@ import SwiftUI
 import SwiftData
 import Swinject
 
+enum AppEnvironment {
+    static func configureForUITests() {
+        AppDelegate.container.removeAll()
+
+        AppDelegate.container.register(RecipeServiceProtocol.self) { _ in
+            MockRecipeService()
+        }
+    }
+}
+
 @main
 struct iRecipeApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    init() {
+        if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
+            AppEnvironment.configureForUITests()
+        }
+    }
     
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
@@ -46,6 +62,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     private func registerManagers() {
+        guard ProcessInfo.processInfo.arguments.contains("-ui-testing") == false else { return }
+        
         // Dependency Injection
         
         AppDelegate.container.register(APIConfigProtocol.self) { _ in

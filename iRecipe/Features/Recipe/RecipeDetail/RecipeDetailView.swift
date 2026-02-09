@@ -59,6 +59,7 @@ struct RecipeDetailView: View {
             } label: {
                 Image(systemName: "square.and.arrow.up")
             }
+            .accessibilityIdentifier("share_button")
         }
     }
 }
