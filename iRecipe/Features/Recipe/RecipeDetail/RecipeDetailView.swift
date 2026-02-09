@@ -64,11 +64,28 @@ struct RecipeDetailView: View {
 }
 
 // MARK: - Preview
-#Preview {
-    NavigationStack {
-        RecipeDetailView(
-            store: RecipeDetailStore(recipe: Recipe.mock),
-            recipe: Recipe.mock
-        )
+
+struct RecipeDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            PreviewWrapper()
+                .previewDisplayName("English")
+                .environment(\.locale, Locale(identifier: "en"))
+            
+            PreviewWrapper()
+                .previewDisplayName("Chinese")
+                .environment(\.locale, Locale(identifier: "zh-Hans"))
+        }
+    }
+    
+    private struct PreviewWrapper: View {
+        var body: some View {
+            NavigationStack {
+                RecipeDetailView(
+                    store: RecipeDetailStore(recipe: Recipe.mock),
+                    recipe: Recipe.mock
+                )
+            }
+        }
     }
 }
