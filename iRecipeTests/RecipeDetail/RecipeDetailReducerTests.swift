@@ -8,30 +8,24 @@
 import XCTest
 @testable import iRecipe
 
+@MainActor
 final class RecipeDetailReducerTests: XCTestCase {
+    private var reducer: RecipeDetailReducer!
 
-    let reducer = RecipeDetailReducer()
-
-    func test_toggleFavorite() {
-        let state = RecipeDetailState.idle(isFavorite: false)
-
-        let (newState, effect) = reducer.reduce(
-            state: state,
-            intent: .toggleFavorite
-        )
-
-        XCTAssertEqual(newState, .idle(isFavorite: true))
-        XCTAssertNil(effect)
+    override func setUp() {
+        super.setUp()
+        reducer = RecipeDetailReducer()
     }
 
-    func test_share_emitsEffect() {
-        let state = RecipeDetailState.idle(isFavorite: false)
+    func test_shareIntent_returnsShareEffect_andKeepsState() {
+        let state = RecipeDetailState()
 
-        let (_, effect) = reducer.reduce(
+        let (newState, effect) = reducer.reduce(
             state: state,
             intent: .share
         )
 
+        XCTAssertEqual(newState, state)
         XCTAssertEqual(effect, .shareRecipe)
     }
 }

@@ -8,14 +8,14 @@
 @testable import iRecipe
 
 final class MockRecipeService: RecipeServiceProtocol {
-    var result: Result<RecipeResponse, Error>!
+    var fetchRecipesResult: Result<RecipeResponse, Error>!
+    var searchRecipesResult: Result<RecipeResponse, Error>!
 
     func fetchRecipes(limit: Int, skip: Int) async throws -> RecipeResponse {
-        switch result! {
-        case .success(let response):
-            return response
-        case .failure(let error):
-            throw error
-        }
+        try fetchRecipesResult.get()
+    }
+
+    func searchRecipes(limit: Int, skip: Int, keyword: String) async throws -> RecipeResponse {
+        try searchRecipesResult.get()
     }
 }
