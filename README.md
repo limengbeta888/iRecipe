@@ -19,6 +19,7 @@ The app allows users to browse recipes, view recipe details, search recipes.
 
 ### Third-Party Dependencies
 
+- DummyJSON: Free Fake REST API for Placeholder JSON Data(https://dummyjson.com)
 - Nuke (12.8.0): Asynchronous image loading and caching for images fetched from the server
 - Swinject (2.10.0): Dependency injection and lifecycle management
 
