@@ -51,7 +51,7 @@ final class RecipeListStore: ObservableObject {
     
     // MARK: - Intent
     func send(_ intent: RecipeListIntent) {
-        guard !(isPreview && intent == .onAppear) else { return }
+        guard !(isPreview) else { return }
 
         let newState = reducer.reduce(state: state, intent: intent)
         guard newState != state else { return }
@@ -60,12 +60,15 @@ final class RecipeListStore: ObservableObject {
 
         switch intent {
         case .onAppear, .loadMore, .retry:
-            if state.isLoading || state.isLoadingMore {
+            if state.isLoading, !state.isSearching {
                 loadRecipes()
             }
-        case .search(let keyword):
-            searchRecipes(keyword)
             
+        case .search(let keyword):
+            if state.isLoading, state.isSearching {
+                searchRecipes(keyword)
+            }
+
         case .cancelSearch:
             break
         }
@@ -80,13 +83,12 @@ final class RecipeListStore: ObservableObject {
                 skip += response.recipes.count
 
                 state.isLoading = false
-                state.isLoadingMore = false
-                state.recipes.append(contentsOf: response.recipes)
+                state.loadedRecipes.append(contentsOf: response.recipes)
                 state.hasMore = !response.recipes.isEmpty
+                state.recipes = state.loadedRecipes
 
             } catch {
                 state.isLoading = false
-                state.isLoadingMore = false
                 state.errorMessage = error.localizedDescription
             }
         }
@@ -97,14 +99,11 @@ final class RecipeListStore: ObservableObject {
             do {
                 let response = try await recipeService.searchRecipes(limit: 0, skip: 0, keyword: keyword)
                 state.isLoading = false
-                state.isLoadingMore = false
-                state.hasMore = false
-                state.recipes.append(contentsOf: response.recipes)
+                state.searchedRecipes = response.recipes
+                state.recipes = state.searchedRecipes
 
             } catch {
                 state.isLoading = false
-                state.isLoadingMore = false
-                state.hasMore = false
                 state.recipes = state.loadedRecipes
                 state.errorMessage = error.localizedDescription
             }

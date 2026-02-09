@@ -17,6 +17,8 @@ struct RecipeListView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
+                
+                Text("Recipe count: \(store.state.recipes.count)")
                 ForEach(store.state.recipes) { recipe in
                     RecipeCell(recipe: recipe)
                         .onAppear {
@@ -27,14 +29,6 @@ struct RecipeListView: View {
                         .onTapGesture {
                             path = [recipe]
                         }
-                }
-
-                if store.state.isLoadingMore {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
                 }
             }
             .navigationTitle("Recipes")
@@ -50,7 +44,7 @@ struct RecipeListView: View {
                 prompt: "Search recipes"
             )
             .overlay {
-                if store.state.isLoading && store.state.recipes.isEmpty {
+                if store.state.isLoading {
                     ProgressView("Loading...")
                 }
             }
@@ -91,7 +85,6 @@ struct RecipeListView_Previews: PreviewProvider {
             state: RecipeListState(
             recipes: Recipe.mockList,
             isLoading: false,
-            isLoadingMore: false,
             hasMore: false,
             errorMessage: nil,
         ))
