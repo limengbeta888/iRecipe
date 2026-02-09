@@ -2,42 +2,56 @@
 //  RecipeTitleCardView.swift
 //  iRecipe
 //
-//  Created by Terry Li on 08/02/2026.
+//  Created by Meng Li on 08/02/2026.
 //
 
 import SwiftUI
+import NukeUI
+import Nuke
 
 struct RecipeTitleCardView: View {
     let recipe: Recipe
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            AsyncImage(url: URL(string: recipe.image)) { phase in
-                switch phase {
-                case .empty:
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .overlay {
-                            ProgressView()
-                        }
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                case .failure:
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .overlay {
-                            Image(systemName: "photo")
-                                .font(.system(size: 50))
-                                .foregroundColor(.gray)
-                        }
-                @unknown default:
-                    EmptyView()
+            // Nuke LazyImage
+            if let url = URL(string: recipe.image) {
+                LazyImage(request: ImageRequest(url: url)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else if state.error != nil {
+                        // Failed to load
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .font(.system(size: 50))
+                                    .foregroundColor(.gray)
+                            }
+                    } else {
+                        // Loading placeholder
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .overlay {
+                                ProgressView()
+                            }
+                    }
                 }
+                .frame(height: 300)
+                .clipped()
+            } else {
+                // Invalid URL fallback
+                Rectangle()
+                    .fill(Color.gray.opacity(0.2))
+                    .frame(height: 300)
+                    .overlay {
+                        Image(systemName: "photo")
+                            .font(.system(size: 50))
+                            .foregroundColor(.gray)
+                    }
             }
-            .frame(height: 300)
-            .clipped()
             
             VStack(alignment: .leading, spacing: 12) {
                 Text(recipe.name)

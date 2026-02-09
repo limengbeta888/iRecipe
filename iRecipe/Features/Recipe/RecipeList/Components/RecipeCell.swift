@@ -6,21 +6,33 @@
 //
 
 import SwiftUI
+import NukeUI
+import Nuke
 
 struct RecipeCell: View {
     let recipe: Recipe
-
+    private let imageSize = 64.0
+    
     var body: some View {
         HStack(spacing: 12) {
-            AsyncImage(url: URL(string: recipe.image)) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
+            if let url = URL(string: recipe.image) {
+                LazyImage(request: ImageRequest(url: url)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Color.gray.opacity(0.3)
+                    }
+                }
+                .frame(width: imageSize, height: imageSize)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            } else {
+                // Fallback if URL is invalid
                 Color.gray.opacity(0.3)
+                    .frame(width: imageSize, height: imageSize)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            .frame(width: 64, height: 64)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(recipe.name)

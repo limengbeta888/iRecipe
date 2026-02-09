@@ -9,8 +9,9 @@ import Foundation
 
 struct RecipeListState: Equatable {
     var recipes: [Recipe] = []
+    var loadedRecipes: [Recipe] = []
     var isLoading: Bool = false
     var isLoadingMore: Bool = false
-    var errorMessage: String? = nil
     var hasMore: Bool = true
+    var errorMessage: String? = nil
 }

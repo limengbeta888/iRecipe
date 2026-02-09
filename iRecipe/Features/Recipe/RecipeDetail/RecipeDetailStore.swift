@@ -9,16 +9,15 @@ import Combine
 import SwiftUI
 
 final class RecipeDetailStore: ObservableObject {
-    @Published private(set) var state: RecipeDetailState
-
+    @Published private(set) var state = RecipeDetailState()
+    
     private let reducer = RecipeDetailReducer()
     private let recipe: Recipe
 
     let effects = PassthroughSubject<RecipeDetailEffect, Never>()
 
-    init(recipe: Recipe, isFavorite: Bool = false) {
+    init(recipe: Recipe) {
         self.recipe = recipe
-        self.state = .idle(isFavorite: isFavorite)
     }
 
     // MARK: - Intent

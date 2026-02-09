@@ -7,15 +7,12 @@
 
 enum RecipeEndpoint: Endpoint {
     case recipes(limit: Int, skip: Int)
-    case recipeDetail(id: Int)
-    case searchRecipes(query: String)
+    case searchRecipes(limit: Int, skip: Int, keyword: String)
     
     var path: String {
         switch self {
         case .recipes:
             return "/recipes"
-        case .recipeDetail(let id):
-            return "/recipes/\(id)"
         case .searchRecipes:
             return "/recipes/search"
         }
@@ -28,10 +25,12 @@ enum RecipeEndpoint: Endpoint {
                 "limit": "\(limit)",
                 "skip": "\(skip)"
             ]
-        case .searchRecipes(let query):
-            return ["q": query]
-        case .recipeDetail:
-            return nil
+        case .searchRecipes(let limit, let skip, let keyword):
+            return [
+                "q": "\(keyword)",
+                "limit": "\(limit)",
+                "skip": "\(skip)",
+            ]
         }
     }
 }

@@ -11,4 +11,6 @@ enum RecipeListIntent: Equatable {
     case onAppear
     case loadMore
     case retry
+    case search(String)
+    case cancelSearch
 }

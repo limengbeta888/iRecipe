@@ -23,12 +23,22 @@ struct RecipeListReducer {
                   !state.isLoadingMore else {
                 return state
             }
-
+            
             newState.isLoadingMore = true
 
         case .retry:
             newState.isLoading = true
             newState.errorMessage = nil
+            
+        case .search(_):
+            newState.isLoading = true
+            newState.errorMessage = nil
+            newState.loadedRecipes = newState.recipes
+            newState.recipes = []
+        
+        case .cancelSearch:
+            newState.errorMessage = nil
+            newState.recipes = newState.loadedRecipes
         }
 
         return newState

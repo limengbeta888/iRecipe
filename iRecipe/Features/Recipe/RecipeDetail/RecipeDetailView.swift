@@ -33,7 +33,6 @@ struct RecipeDetailView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            favoriteButton
             shareButton
         }
         .onReceive(store.effects) { effect in
@@ -52,17 +51,6 @@ struct RecipeDetailView: View {
             ShareSheet(items: shareItems)
         }
     }
-    
-    var favoriteButton: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button {
-                store.send(.toggleFavorite)
-            } label: {
-                Image(systemName: isFavorite ? "heart.fill" : "heart")
-                    .foregroundColor(isFavorite ? .red : .primary)
-            }
-        }
-    }
 
     var shareButton: some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
@@ -73,23 +61,13 @@ struct RecipeDetailView: View {
             }
         }
     }
-
-    var isFavorite: Bool {
-        if case .idle(let value) = store.state {
-            return value
-        }
-        return false
-    }
 }
 
 // MARK: - Preview
 #Preview {
     NavigationStack {
         RecipeDetailView(
-            store: RecipeDetailStore(
-                recipe: Recipe.mock,
-                isFavorite: true
-            ),
+            store: RecipeDetailStore(recipe: Recipe.mock),
             recipe: Recipe.mock
         )
     }

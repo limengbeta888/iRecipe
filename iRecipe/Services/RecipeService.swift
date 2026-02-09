@@ -9,6 +9,7 @@ import Foundation
 
 protocol RecipeServiceProtocol {
     func fetchRecipes(limit: Int, skip: Int) async throws -> RecipeResponse
+    func searchRecipes(limit: Int, skip: Int, keyword: String) async throws -> RecipeResponse
 }
 
 final class RecipeService: RecipeServiceProtocol {
@@ -20,6 +21,11 @@ final class RecipeService: RecipeServiceProtocol {
     
     func fetchRecipes(limit: Int, skip: Int) async throws -> RecipeResponse {
         let endpoint = RecipeEndpoint.recipes(limit: limit, skip: skip)
+        return try await networkClient.request(endpoint: endpoint)
+    }
+    
+    func searchRecipes(limit: Int, skip: Int, keyword: String) async throws -> RecipeResponse {
+        let endpoint = RecipeEndpoint.searchRecipes(limit: limit, skip: skip, keyword: keyword)
         return try await networkClient.request(endpoint: endpoint)
     }
 }

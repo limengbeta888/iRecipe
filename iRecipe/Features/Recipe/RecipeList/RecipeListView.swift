@@ -12,9 +12,10 @@ struct RecipeListView: View {
     @ObservedObject var store: RecipeListStore
     @State private var path = [Recipe]()
     @State private var showErrorAlert = false
-
+    @State private var searchText = ""
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 ForEach(store.state.recipes) { recipe in
                     RecipeCell(recipe: recipe)
@@ -22,6 +23,9 @@ struct RecipeListView: View {
                             if recipe.id == store.state.recipes.last?.id {
                                 store.send(.loadMore)
                             }
+                        }
+                        .onTapGesture {
+                            path = [recipe]
                         }
                 }
 
@@ -34,6 +38,17 @@ struct RecipeListView: View {
                 }
             }
             .navigationTitle("Recipes")
+            .navigationDestination(for: Recipe.self) { recipe in
+                RecipeDetailView(
+                    store: RecipeDetailStore(recipe: recipe),
+                    recipe: recipe
+                )
+            }
+            .searchable(
+                text: $store.searchText,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search recipes"
+            )
             .overlay {
                 if store.state.isLoading && store.state.recipes.isEmpty {
                     ProgressView("Loading...")
@@ -63,8 +78,8 @@ struct RecipeListView: View {
                 recipes: Recipe.mockList,
                 isLoading: false,
                 isLoadingMore: false,
+                hasMore: false,
                 errorMessage: nil,
-                hasMore: false
             )
         )
     )

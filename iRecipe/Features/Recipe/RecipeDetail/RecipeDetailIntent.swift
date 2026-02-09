@@ -8,6 +8,5 @@
 import Foundation
 
 enum RecipeDetailIntent: Equatable {
-    case toggleFavorite
     case share
 }
